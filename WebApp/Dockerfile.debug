@@ -1,0 +1,7 @@
+FROM node:12-alpine
+WORKDIR /myapp
+EXPOSE 4200
+COPY "package.json" .
+RUN npm install
+COPY . .
+ENTRYPOINT [ "npm", "run", "selenium-test-start"]

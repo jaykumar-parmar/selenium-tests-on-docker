@@ -1,0 +1,46 @@
+version: "3"
+services:
+  api:
+    build:
+      context: ./JsonAPI
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    expose:
+      - 3000
+  web-app:
+    build:
+      context: ./WebApp
+      dockerfile: Dockerfile
+    ports:
+      - "4200:4200"
+    expose:
+      - 4200
+    depends_on:
+      - api
+    volumes:
+      - ./WebApp/src:/myapp/src
+  standalone-chrome:
+    image: selenium/standalone-chrome
+    container_name: standalone-chrome
+    ports:
+      - "5900:5900"
+      - "4444:4444"
+    volumes:
+      - /dev/shm:/dev/shm
+    expose:
+      - 4444
+      - 5900
+    environment:
+      - HUB_HOST=standalone-chrome
+      - HUB_PORT=4444
+    depends_on:
+      - web-app
+  selenium-app:
+    depends_on:
+      - web-app
+    build:
+      context: ./SeleniumTest
+      dockerfile: Dockerfile
+    
+
